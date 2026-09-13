@@ -55,7 +55,40 @@ app.post("/api/order", (req, res) => {
 app.post("/api/midtrans/webhook", (req, res) => {
 
     console.log("Notifikasi Midtrans diterima:");
-    console.log(req.body);
+
+    const notification = req.body;
+
+    console.log(notification);
+
+    const orderId = notification.order_id;
+    const transactionStatus = notification.transaction_status;
+    const fraudStatus = notification.fraud_status;
+
+    console.log("Order ID:", orderId);
+    console.log("Status transaksi:", transactionStatus);
+    console.log("Status fraud:", fraudStatus);
+
+    if (
+        transactionStatus === "settlement" ||
+        transactionStatus === "capture"
+    ) {
+
+        console.log("✅ PEMBAYARAN BERHASIL:", orderId);
+
+        // Nanti proses top up otomatis kita masukkan di sini.
+
+    } else if (transactionStatus === "pending") {
+
+        console.log("⏳ PEMBAYARAN MASIH PENDING:", orderId);
+
+    } else if (
+        transactionStatus === "cancel" ||
+        transactionStatus === "deny" ||
+        transactionStatus === "expire"
+    ) {
+
+        console.log("❌ PEMBAYARAN GAGAL:", orderId);
+    }
 
     res.status(200).json({
         success: true
